@@ -28,7 +28,20 @@ export default function CalendarGenerator() {
       newConfig.dayOfWeek,
     );
     setConfig(newConfig);
-    setEvents(generatedEvents);
+    setEvents((prevEvents) => {
+      if (!prevEvents || prevEvents.length === 0) return generatedEvents;
+
+      return generatedEvents.map((newEvent, index) => {
+        let oldEvent = prevEvents.find((e) => e.date.getTime() === newEvent.date.getTime());
+        if (!oldEvent) {
+          oldEvent = prevEvents[index];
+        }
+        return {
+          ...newEvent,
+          assignee: oldEvent?.assignee || '',
+        };
+      });
+    });
     setIsGenerated(true);
   }, []);
 
@@ -73,8 +86,24 @@ export default function CalendarGenerator() {
 
   /** Dispara la impresión del navegador */
   const handlePrint = useCallback(() => {
-    window.print();
-  }, []);
+    if (config) {
+      const originalTitle = document.title;
+      const sanitizedDept = config.departmentName
+        .toUpperCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Eliminar diacríticos
+        .replace(/[^A-Z0-9]/g, '_')     // Reemplazar espacios y otros por _
+        .replace(/_+/g, '_');           // Evitar múltiples guiones bajos
+
+      const trimesterStr = config.quarterId.replace('T', '') + 'TR';
+
+      document.title = `CALENDARIO_${trimesterStr}_${sanitizedDept}`;
+      window.print();
+      document.title = originalTitle;
+    } else {
+      window.print();
+    }
+  }, [config]);
 
   /** Reiniciar todo */
   const handleReset = useCallback(() => {
@@ -86,13 +115,13 @@ export default function CalendarGenerator() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* ─── HEADER ─── */}
-      <header className="border-b border-slate-200 bg-white print:hidden">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800">
+      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-md print:hidden sm:px-6 sm:py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800 shadow-sm sm:h-9 sm:w-9">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-white"
+                className="h-4 w-4 text-white sm:h-5 sm:w-5"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -104,19 +133,19 @@ export default function CalendarGenerator() {
               </svg>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-800">Unísono</h1>
-              <p className="text-xs text-slate-500">
-                Generador de Calendarios de Servicio
+              <h1 className="text-base font-bold tracking-tight text-slate-800 sm:text-lg">Unísono</h1>
+              <p className="hidden text-xs text-slate-500 sm:block">
+                Generador Dinámico de Calendarios
               </p>
             </div>
           </div>
 
           {isGenerated && (
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
               <button
                 type="button"
                 onClick={handleReset}
-                className="cursor-pointer rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-slate-50"
+                className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm transition-all duration-200 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
               >
                 Nuevo
               </button>
@@ -124,11 +153,11 @@ export default function CalendarGenerator() {
                 type="button"
                 onClick={handlePrint}
                 id="print-btn"
-                className="flex cursor-pointer items-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-slate-700"
+                className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all duration-200 hover:bg-slate-700 hover:shadow active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
+                  className="h-3.5 w-3.5 sm:h-4 sm:w-4"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -138,7 +167,8 @@ export default function CalendarGenerator() {
                     clipRule="evenodd"
                   />
                 </svg>
-                Imprimir / PDF
+                <span className="hidden sm:inline">Imprimir / PDF</span>
+                <span className="sm:hidden">PDF</span>
               </button>
             </div>
           )}
@@ -148,7 +178,7 @@ export default function CalendarGenerator() {
       {/* ─── CONTENIDO PRINCIPAL ─── */}
       {!isGenerated ? (
         /* ─── VISTA FORMULARIO ─── */
-        <main className="mx-auto max-w-lg px-6 py-16 print:hidden">
+        <main className="mx-auto max-w-lg px-4 py-8 sm:px-6 sm:py-16 print:hidden">
           <div className="mb-10 text-center">
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
               <svg
@@ -174,12 +204,12 @@ export default function CalendarGenerator() {
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <ConfigForm onGenerate={handleGenerate} />
+            <ConfigForm onGenerate={handleGenerate} initialConfig={config} />
           </div>
         </main>
       ) : (
         /* ─── VISTA EDITOR + PREVIEW ─── */
-        <main className="mx-auto max-w-7xl px-6 py-8">
+        <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
             {/* Panel izquierdo: Editor */}
             <aside className="print:hidden lg:col-span-4">
@@ -187,12 +217,28 @@ export default function CalendarGenerator() {
                 {/* Info del departamento */}
                 <div className="rounded-xl border border-slate-200 bg-white p-5">
                   <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-slate-800">
-                      {config?.departmentName}
-                    </h2>
-                    <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
-                      {config?.year}
-                    </span>
+                    <div>
+                      <h2 className="text-lg font-bold text-slate-800">
+                        {config?.departmentName}
+                      </h2>
+                      <span className="mt-1 inline-block rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
+                        {config?.year} — Trimestre {config?.quarterId?.replace('T', '')}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setIsGenerated(false)}
+                      className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm transition-all duration-200 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5 text-slate-400 transition-colors group-hover:text-slate-600"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                      </svg>
+                      Editar
+                    </button>
                   </div>
                   <EventEditor
                     events={events}

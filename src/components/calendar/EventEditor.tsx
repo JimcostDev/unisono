@@ -65,11 +65,11 @@ export default function EventEditor({
                   }`}
                 >
                   {/* Indicador visual del día */}
-                  <div className="flex min-w-[120px] items-center gap-2">
+                  <div className="flex w-24 shrink-0 items-center gap-2 sm:min-w-[120px]">
                     {event.isCustom && (
                       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
                     )}
-                    <span className="text-sm font-medium text-slate-600">
+                    <span className="truncate text-sm font-medium text-slate-600">
                       {formatDayLabel(event.date)}
                     </span>
                   </div>
@@ -79,15 +79,15 @@ export default function EventEditor({
                     type="text"
                     value={event.assignee}
                     onChange={(e) => onUpdateEvent(event.id, e.target.value)}
-                    placeholder="Nombre de la persona..."
-                    className="flex-1 border-0 bg-transparent px-0 py-0 text-sm text-slate-900 placeholder-slate-300 focus:ring-0 focus:outline-none"
+                    placeholder="Nombre..."
+                    className="min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm text-slate-900 placeholder-slate-300 focus:ring-0 focus:outline-none"
                   />
 
                   {/* Controles (solo custom) */}
                   {event.isCustom && (
-                    <div className="flex items-center gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                    <div className="flex shrink-0 items-center gap-1 transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100">
                       {/* Botón cambiar fecha */}
-                      <div className="relative flex cursor-pointer items-center justify-center rounded p-1 text-slate-300 hover:text-slate-600">
+                      <div className="relative flex cursor-pointer items-center justify-center rounded p-1.5 text-slate-300 hover:bg-slate-100 hover:text-slate-600">
                         <input
                           type="date"
                           title="Cambiar fecha"
@@ -102,7 +102,7 @@ export default function EventEditor({
                               );
                             }
                           }}
-                          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                          className="absolute inset-0 h-full w-full cursor-pointer opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
                         />
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -125,7 +125,7 @@ export default function EventEditor({
                       <button
                         type="button"
                         onClick={() => onRemoveEvent(event.id)}
-                        className="cursor-pointer rounded p-1 text-slate-300 hover:text-red-400"
+                        className="cursor-pointer rounded p-1.5 text-slate-300 hover:bg-red-50 hover:text-red-500"
                         aria-label="Eliminar fecha"
                       >
                         <svg

@@ -57,9 +57,8 @@ export default function VerticalTableTemplate({
               return monthEvents.map((event, idx) => (
                 <tr
                   key={event.id}
-                  className={`border-b border-slate-100 ${
-                    idx === 0 ? 'border-t border-slate-200' : ''
-                  }`}
+                  className={`border-b border-slate-100 ${idx === 0 ? 'border-t border-slate-200' : ''
+                    }`}
                 >
                   {/* Mostrar nombre del mes solo en la primera fila */}
                   {idx === 0 ? (
@@ -71,7 +70,7 @@ export default function VerticalTableTemplate({
                     </td>
                   ) : null}
                   <td className="px-4 py-2.5 text-center text-xs font-medium text-slate-400">
-                    {getWeekOfMonth(event.date)}
+                    {events.findIndex((e) => e.id === event.id) + 1}
                   </td>
                   <td className="px-4 py-2.5 text-sm font-medium text-slate-600">
                     {formatDateShort(event.date)}
@@ -86,12 +85,7 @@ export default function VerticalTableTemplate({
         </table>
       </div>
 
-      {/* Pie */}
-      <footer className="border-t border-slate-200 pt-4 text-center">
-        <p className="text-xs text-slate-400">
-          Iglesia Adventista — {config.departmentName} — {config.year}
-        </p>
-      </footer>
+
     </div>
   );
 }

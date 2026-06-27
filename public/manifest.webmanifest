@@ -1,0 +1,17 @@
+{
+  "name": "Unísono — Generador Dinámico de Calendarios",
+  "short_name": "Unísono",
+  "description": "Aplicación web para automatizar y estandarizar la creación de cronogramas trimestrales de equipos y servicios eclesiásticos. Facilita a los administradores el cálculo dinámico de fechas y la asignación de personal a eventos cíclicos a través de una interfaz minimalista. Su principal utilidad es optimizar la organización institucional y eliminar el trabajo manual, permitiendo exportar los calendarios generados directamente a documentos PDF.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -78,12 +78,7 @@ export default function HorizontalTableTemplate({
         </table>
       </div>
 
-      {/* Pie */}
-      <footer className="border-t border-slate-200 pt-4 text-center">
-        <p className="text-xs text-slate-400">
-          Iglesia Adventista — {config.departmentName} — {config.year}
-        </p>
-      </footer>
+
     </div>
   );
 }

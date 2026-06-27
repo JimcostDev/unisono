@@ -4,16 +4,17 @@ import { DAY_LABELS, QUARTERS } from '@types/calendar';
 
 interface ConfigFormProps {
   onGenerate: (config: DepartmentConfig) => void;
+  initialConfig?: DepartmentConfig | null;
 }
 
 const CURRENT_YEAR = new Date().getFullYear();
 const YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - 1 + i);
 
-export default function ConfigForm({ onGenerate }: ConfigFormProps) {
-  const [departmentName, setDepartmentName] = useState('');
-  const [year, setYear] = useState(CURRENT_YEAR);
-  const [quarterId, setQuarterId] = useState<QuarterId>('T3');
-  const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek>(6);
+export default function ConfigForm({ onGenerate, initialConfig }: ConfigFormProps) {
+  const [departmentName, setDepartmentName] = useState(initialConfig?.departmentName || '');
+  const [year, setYear] = useState(initialConfig?.year || CURRENT_YEAR);
+  const [quarterId, setQuarterId] = useState<QuarterId>(initialConfig?.quarterId || 'T3');
+  const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek>(initialConfig?.dayOfWeek || 6);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
